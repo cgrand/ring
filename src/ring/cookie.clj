@@ -93,6 +93,18 @@
           #(concat (if (string? %) (list %) %) 
              (map write-cookie set-cookies)))
         resp))))
+
+(defn set-cookie
+ "Adds a cookie to the :cookies field."
+  ([resp k v] (set-cookie k v nil))
+  ([{:keys [cookies] :as resp} k v options]
+    (assoc resp :cookies (conj (or cookies []) [k v options])))
+          
+(defn delete-cookie
+ "Ask the client to delete the cookie."
+  ([resp k v] (delete-cookie k v {}))
+  ([{:keys [cookies] :as resp} k v options]
+    (set-cookie resp k v (assoc options "Max-Age" "0"))))
           
 (comment 
   (= '(["Customer" "WILE_E_COYOTE" {"$Path" "/acme"}] ["Part_Number" "Rocket_Launcher_0001" {"$Path" "/acme"}] ["Shipping" "FedEx" {"$Path" "/acme"}])
